@@ -3,8 +3,6 @@ var app = express();
 var dotenv = require('dotenv');
 var bodyParser = require('body-parser');
 
-// Import routes
-var mainRouter = require('./routes/main');
 
 // Configure env variables
 dotenv.config();
@@ -13,11 +11,25 @@ dotenv.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-// Set Routes
-app.use('/', mainRouter);
-
 app.set('port', process.env.PORT);
 var server = app.listen(app.get('port'), function() {
 	console.log('Washing machine server listening on port ' + server.address().port);
 })
 
+var io = require('socket.io')(server);
+
+io.on('connection', function(socket) {
+	console.log('A new device has connected');
+	console.log(socket);
+})
+// Set Routes
+app.post('/machineStatus', function(req,res,next) {
+	console.log(req.body);
+	var machineName = req.body.machineName;
+	var machineStatus = req.body.machineStatus;
+
+	io.sockets.emit('machineStatus', {machineName : machineName ,machineStatus : machineStatus});
+
+	console.log(machineName + " is " + machineStatus);
+	return res.status(200).send("Printer status received");
+})
