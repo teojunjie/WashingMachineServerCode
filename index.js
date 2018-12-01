@@ -20,9 +20,15 @@ var io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
 	console.log('A new device has connected');
-	console.log(socket);
+	console.log(socket.id);
+
 })
+
 // Set Routes
+app.get('/', function(req,res,next) {
+	console.log("Ping gh server");
+	res.sendFile(__dirname + '/welcomepage.html');
+})
 app.post('/machineStatus', function(req,res,next) {
 	console.log(req.body);
 	var machineName = req.body.machineName;
