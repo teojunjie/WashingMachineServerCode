@@ -21,7 +21,6 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
 	console.log('A new device has connected');
 	console.log(socket.id);
-
 })
 
 // Set Routes
