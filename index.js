@@ -9,7 +9,7 @@ var WashingMachine = require('./models/washingmachine');
 // Configure env variables
 dotenv.config();
 
-mongoose.connect(process.env.DBURL);
+mongoose.connect(process.env.DBURL, {useNewUrlParser : true});
 var db = mongoose.connection;
 db.on('error',console.error.bind(console,'connection error'));
 db.once('open',function() {
