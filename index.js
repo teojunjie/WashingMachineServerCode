@@ -77,12 +77,14 @@ app.post('/addWashingMachine', function(req,res,next) {
 
 app.post('/machineStatus', function(req,res,next) {
 	console.log(req.body);
+	var block = req.body.block;
 	var machineId = req.body.machineId;
 	var machineStatus = req.body.machineStatus;
 	var machineBackgroundColor = req.body.machineBackgroundColor;
 	var text = req.body.text;
 
 	var data = {
+		block : block,
 		machineId : machineId,
 		machineStatus : machineStatus,
 		machineBackgroundColor : machineBackgroundColor,
@@ -90,6 +92,13 @@ app.post('/machineStatus', function(req,res,next) {
 	}
 	io.sockets.emit('machineStatus', data);
 
-	console.log("Washing machine " + machineId + " is " + machineStatus);
-	return res.status(200).send("Printer status received");
+	WashingMachine.findOneAndUpdate({block : block, machineId : machineId},data,(err, result)=>{
+		if (err) return next(err);
+		if (!result) {
+			return res.status(401).send("No such washing machine");
+			next(err);
+			}
+			console.log("Washing machine " + machineId + " is " + machineStatus);
+			return res.status(200).send("Printer status received");
+			})
 })
